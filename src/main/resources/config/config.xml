@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+	<typeAliases>
+		<typeAlias alias="memberVO" type="com.mega.vhplayer.beans.vo.MemberVO"/>
+		<typeAlias alias="boardVO" type="com.mega.vhplayer.beans.vo.BoardVO"/>
+		<typeAlias alias="replyVO" type="com.mega.vhplayer.beans.vo.ReplyVO"/>
+	</typeAliases>
+</configuration>

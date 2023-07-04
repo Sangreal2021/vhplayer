@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.mega.vhplayer.mappers.MemberMapper">
+	<sql id="criteria">
+		<if test="type != null and keyword != null">
+			<trim prefix="AND (" suffix=")" prefixOverrides="OR">
+				<foreach item="type" collection="typeArr">
+					<trim prefix="OR">
+						<choose>
+							<when test="type == 'E'.toString()">
+								(USER_EMAIL LIKE CONCAT('%', #{keyword}, '%'))
+							</when>
+							<when test="type == 'N'.toString()">
+								(USER_NAME LIKE CONCAT('%', #{keyword}, '%'))
+							</when>
+							<when test="type == 'A'.toString()">
+								(USER_AUTH LIKE CONCAT('%', #{keyword}, '%'))
+							</when>
+						</choose>
+					</trim>
+				</foreach>
+			</trim>
+		</if>
+	</sql>
+	
+	<select id="getTotal" resultType="_int">
+		SELECT COUNT(*) FROM TBL_MEMBER WHERE
+		<![CDATA[
+			UNO > 0
+		]]>
+		<include refid="criteria"></include>
+	</select>
+	<select id="getListWithPaging" resultType="memberVO">
+		<![CDATA[
+			SELECT * FROM TBL_MEMBER
+			WHERE UNO > 0
+		]]>
+		<include refid="criteria"></include>
+		<![CDATA[
+			ORDER BY UNO DESC
+			LIMIT #{limit} OFFSET #{offset}
+		]]>
+	</select>
+	<select id="getList" resultType="memberVO">
+		<![CDATA[
+			SELECT * FROM TBL_MEMBER WHERE UNO > 0
+			ORDER BY UNO DESC
+		]]>
+	</select>
+	<!-- 회원가입 -->
+	<insert id="insert">
+		INSERT INTO TBL_MEMBER (UNO, USER_EMAIL, USER_PW, USER_NAME)
+		VALUES (NEXTVAL(SEQ_MEMBER), #{user_email}, #{user_pw}, #{user_name})
+	</insert>
+	<insert id="insertSelectKey_uno">
+		<selectKey keyProperty="uno" order="BEFORE" resultType="long">
+			SELECT NEXTVAL(SEQ_MEMBER) FROM DUAL
+		</selectKey>
+		INSERT INTO TBL_MEMBER (UNO, USER_EMAIL, USER_PW, USER_NAME)
+		VALUES (#{uno}, #{user_email}, #{user_pw}, #{user_name})
+	</insert>
+	
+	<!-- MyPage 개인정보 조회, 수정, 삭제 -->
+	<select id="read" resultType="memberVO">
+		SELECT * FROM TBL_MEMBER WHERE UNO = #{uno}
+	</select>
+	<delete id="delete">
+		DELETE FROM TBL_MEMBER
+		WHERE UNO = #{uno}
+	</delete>
+	<update id="update">
+		UPDATE TBL_MEMBER
+		SET USER_EMAIL = #{user_email}, USER_PW = #{user_pw}, USER_NAME = #{user_name},
+			UPDATEDATE = SYSDATE()
+		WHERE UNO = #{uno}
+	</update>
+	
+	<!-- Admin Grant Auth -->
+	<update id="adminUpdate">
+		UPDATE TBL_MEMBER
+		SET USER_EMAIL = #{user_email}, USER_PW = #{user_pw}, USER_NAME = #{user_name},
+			USER_AUTH = #{user_auth}, DELETE_YN = #{delete_yn}, UPDATEDATE = SYSDATE()
+		WHERE UNO = #{uno}
+	</update>
+	
+	<!-- Log In -->
+	<select id="login" resultType="memberVO">
+		SELECT * FROM TBL_MEMBER
+		WHERE USER_EMAIL = #{user_email} AND USER_PW = #{user_pw}
+	</select>
+	<select id="checkDuplicateEmail" parameterType="string" resultType="_int">
+		SELECT COUNT(*) FROM TBL_MEMBER
+		WHERE USER_EMAIL = #{user_email}
+	</select>
+	<select id="checkDuplicateName" parameterType="string" resultType="_int">
+		SELECT COUNT(*) FROM TBL_MEMBER
+		WHERE USER_NAME = #{user_name}
+	</select>
+</mapper>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

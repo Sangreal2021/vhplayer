@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- 연결할 인터페이스 경로를 namespace에 작성 -->
+<mapper namespace="com.mega.vhplayer.mappers.ReplyMapper">
+	<insert id="insert">
+		INSERT INTO TBL_REPLY (RNO, BNO, REPLY, USER_NAME)
+		VALUES (NEXTVAL(SEQ_REPLY), #{bno}, #{reply}, #{user_name})
+	</insert>
+	<select id="read" resultType="replyVO">
+		SELECT	RNO, BNO, REPLY, USER_NAME, REPLYDATE, UPDATEDATE
+		FROM	TBL_REPLY
+		WHERE	RNO = #{rno}
+		LIMIT 1
+	</select>
+	<delete id="delete">
+		DELETE FROM TBL_REPLY WHERE RNO = #{rno}
+	</delete>
+	<update id="update">
+		UPDATE	TBL_REPLY
+		SET		REPLY = #{reply}
+				, USER_NAME = #{user_name}
+				, UPDATEDATE = SYSDATE()
+		WHERE	RNO = #{rno}
+	</update>
+	<select id="getListWithPaging" resultType="replyVO">
+		SELECT RNO, BNO, REPLY, USER_NAME, REPLYDATE, UPDATEDATE
+		FROM TBL_REPLY
+		WHERE BNO = #{bno}
+		ORDER BY RNO DESC
+		LIMIT #{cri.limit} OFFSET #{cri.offset}
+	</select>
+	<select id="getTest" resultType="replyVO">
+		SELECT * FROM TBL_REPLY
+		WHERE BNO = #{bno} AND RNO = #{rno}
+	</select>
+</mapper>

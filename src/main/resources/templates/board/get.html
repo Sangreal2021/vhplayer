@@ -1,0 +1,473 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Detail Page</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link rel="stylesheet" href="/assets/css/main.css" />
+	<!-- <link rel="stylesheet" href="/assets/css/bootstrap/bootstrap.css" /> -->
+	<script type="text/javascript" src="/assets/js/reply.js"></script>
+	<link rel="shortcut icon" type="image/x-icon" href="/assets/favi/WoW.ico" />
+</head>
+<body class="no-sidebar is-preload">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<section id="header">
+			<div th:if="${session.memberLogin == null}" style="display: flex; justify-content: flex-end;">
+				<p style="margin-right: 10px; line-height: 30px; margin: 0;">로그인 되어있지 않습니다.</p>
+			    <form th:action="@{/login/loginForm#login_page}" method="get">
+			        <input type="submit" value="Log-In" style="width: 80px; height: 30px; text-align: center; padding: 0; margin-left: 10px;">
+			    </form>
+			</div>
+			<div th:if="${session.memberLogin != null}" style="display: flex; justify-content: flex-end; align-items: center;">
+				<p style="margin-right: 10px; line-height: 30px; margin: 0;"><span th:text="${session.memberLogin.user_name}"></span>님 환영합니다</p>
+				<form th:action="@{/login/logout}" method="post" style="margin-left: 10px;">
+					<input type="submit" value="LogOut" id="logout" style="width: 80px; height: 30px; text-align: center; padding: 0;">
+				</form>
+			</div>
+			<div class="container">
+
+				<!-- Logo -->
+				<h1 id="logo"><a href="/board/boardlist">Board</a></h1>
+				<p>Free to Talk</p>
+
+				<!-- Nav -->
+				<nav id="nav">
+					<ul>
+						<li><a class="icon solid fa-home" href="/index"><span>Home</span></a></li>
+						<li th:if="${session.memberLogin != null and session.memberLogin.user_auth == '1'}"><a class="icon solid fa-home" href="/admin/index_admin"><span>Admin</span></a></li>
+						<li><a class="icon solid fa-cog" href="/player/playlist"><span>Player</span></a></li>
+						<li><a class="icon solid fa-retweet" href="/board/boardlist"><span>Board</span></a></li>
+						<li><a class="icon solid fa-sitemap" href="/login/loginForm"><span>Sign up</span></a></li>
+						<li th:if="${session.memberLogin != null}"><a class="icon fa-chart-bar" href="/mypage/myPageForm"><span>My Page</span></a></li>
+					</ul>
+				</nav>
+
+			</div>
+		</section>
+
+		<!-- Main -->
+		<section id="main">
+			<div class="container">
+				<div id="content">
+
+					<!-- Post -->
+					<article class="box post">
+						<header>
+							<h2><strong>BGM 요청 및 자유토론</strong></h2>
+						</header>
+						<h3><a id="goList" href="#">To List</a></h3>
+						<div class="wrap">
+							<form action="/board/remove" method="post" id="deleteForm">
+								<table class="table" th:object="${board}">
+							        <tr>
+							            <th>번호</th>
+							            <td>
+							                <input type="hidden" name="bno" th:field="*{bno}">
+							                <span th:text="*{bno}"></span>
+							            </td>
+							        </tr>
+							        <tr>
+							            <th>타이틀</th>
+							            <td>
+							            	<input name="title" type="hidden" th:field="*{title}" readonly/>
+							            	<span th:text="*{title}"></span>
+							            </td>
+							        </tr>
+							        <tr>
+							            <th>내용</th>
+							            <td>
+							            	<textarea name="content" style="resize:none;" rows="6" cols="100" th:text="*{content}" readonly></textarea>
+							            </td>
+							        </tr>
+							        <tr>
+							            <th>작성자</th>
+							            <td th:text="*{user_name}">
+							            	<input name="user_name" type="text" th:field="*{user_name}" readonly/>
+							            </td>
+							        </tr>
+							        <tr>
+							            <th>작성자 이메일</th>
+							            <td>
+							            	<input name="user_email" type="hidden" th:field="*{user_email}" readonly/>
+							            	<span th:text="*{user_email}"></span>
+							            </td>
+							        </tr>
+							        <tr>
+							            <th>작성일자</th>
+							            <td th:text="*{regdate}"></td>
+							        </tr>
+							        <tr>
+							            <th>수정일자</th>
+							            <td th:text="*{updatedate}"></td>
+							        </tr>
+							        <td colspan="2">
+						                <input type="button" value="수정하기" id="updateBtn" onclick="goUpdate()" th:if="${session.memberLogin != null}">&nbsp;&nbsp;
+						                <input type="submit" value="삭제하기" id="deleteBtn" th:if="${session.memberLogin != null}">
+						            </td>
+							    </table>
+							
+								<hr>
+								<h4>└&nbsp;Replies</h4>
+								<hr>
+								<!--  href="javascript:void(0)"는 누르기만 가능하도록.. -->
+								<!-- display: none;은 기본적으로 안보이게 -->
+								<a href="javascript:void(0)" class="register" th:if="${session.memberLogin != null}">댓글등록</a><br>
+								
+								<table class="table register-form" style="display: none;">
+									<tr>
+										<th>작성자</th>
+										<td>
+											<input type="text" name="user_name" th:value="${session.memberLogin.user_name}" readonly/>
+											<span th:text="*{user_name}"></span>
+										</td>
+									</tr>
+									<tr>
+										<th>댓글</th>
+										<td>
+											<textarea rows="6" name="reply" style="resize: none;"></textarea>
+										</td>
+									</tr>
+									<td colspan="2">
+										<a href="javascript:void(0)" class="button primary small finish">등록</a>
+										<a href="javascript:void(0)" class="button primary small cancel">취소</a>
+									</td>
+								</table>
+								
+								<ul class="replies"></ul>
+								
+								<h3><a id="goList" href="#">To List</a></h3>
+							</form>
+						</div>
+					</article>
+
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+			<section id="footer">
+				<div class="container">
+					<header>
+						<h2>Questions or comments? <strong>Get in touch:</strong></h2>
+					</header>
+					<div class="row">
+						<div class="col-6 col-12-medium">
+							<section>
+								<form method="post" action="#">
+									<div class="row gtr-50">
+										<div class="col-6 col-12-small">
+											<input name="name" placeholder="Name" type="text" />
+										</div>
+										<div class="col-6 col-12-small">
+											<input name="email" placeholder="Email" type="text" />
+										</div>
+										<div class="col-12">
+											<textarea name="message" placeholder="Message"></textarea>
+										</div>
+										<div class="col-12">
+											<a href="#" class="form-button-submit button icon solid fa-envelope">Send Message</a>
+										</div>
+									</div>
+								</form>
+							</section>
+						</div>
+						<div class="col-6 col-12-medium">
+							<section>
+								<p>Erat lorem ipsum veroeros consequat magna tempus lorem ipsum consequat Phaselamet
+								mollis tortor congue. Sed quis mauris sit amet magna accumsan tristique. Curabitur
+								leo nibh, rutrum eu malesuada.</p>
+								<div class="row">
+									<div class="col-6 col-12-small">
+										<ul class="icons">
+											<li class="icon solid fa-home">
+												1234 Somewhere Road<br />
+												Nashville, TN 00000<br />
+												USA
+											</li>
+											<li class="icon solid fa-phone">
+												(000) 000-0000
+											</li>
+											<li class="icon solid fa-envelope">
+												<a href="#">info@untitled.tld</a>
+											</li>
+										</ul>
+									</div>
+									<div class="col-6 col-12-small">
+										<ul class="icons">
+											<li class="icon brands fa-twitter">
+												<a href="#">@untitled</a>
+											</li>
+											<li class="icon brands fa-instagram">
+												<a href="#">instagram.com/untitled</a>
+											</li>
+											<li class="icon brands fa-dribbble">
+												<a href="#">dribbble.com/untitled</a>
+											</li>
+											<li class="icon brands fa-facebook-f">
+												<a href="#">facebook.com/untitled</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</section>
+						</div>
+					</div>
+				</div>
+				<div id="copyright" class="container">
+					<ul class="links">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</section>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="/assets/js/jquery.min.js"></script>
+	<script src="/assets/js/jquery.dropotron.min.js"></script>
+	<script src="/assets/js/browser.min.js"></script>
+	<script src="/assets/js/breakpoints.min.js"></script>
+	<script src="/assets/js/util.js"></script>
+	<script src="/assets/js/main.js"></script>
+
+</body>
+<script type="text/javascript" th:src="@{/js/jquery-3.6.4.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+	let bno = /*[[${board.getBno()}]]*/'기본값';
+	// Criteria 클래스의 getListLink() 호출
+	let paging = /*[[${cri.getListLink()}]]*/'기본값';
+	
+	// 서버의 세션은 이미 렌더링이 끝나고 보낸 html에 존재하지 않음
+	// 그래서 인라인 문법을 사용해 서버의 세션 값을 JavaScript 변수에 할당
+	/*<![CDATA[*/
+		var sessionUserEmail = /*[[${session.memberLogin.user_email}]]*/'default';
+	    var userAuth = /*[[${session.memberLogin.user_auth}]]*/'default';
+	/*]]>*/
+	
+	function goUpdate() {
+	    var userEmail = $("input[name='user_email']").val();
+	    
+	    if (userEmail !== sessionUserEmail && userAuth !== "1") {
+	        alert("수정하기 권한이 없습니다.");
+	    } else {
+			window.location.href = "/board/modify" + paging + "&bno=" + bno;
+        }
+	}
+	
+	// 사용자 이메일이 일치하지 않으면 삭제 금지, admin은 가능
+	$(document).ready(function(){
+	    $('#deleteBtn').click(function(e){
+	        var userEmail = $("input[name='user_email']").val();
+	        
+	        if (userEmail !== sessionUserEmail && userAuth !== "1") {
+	            alert("삭제하기 권한이 없습니다.");
+	            e.preventDefault();
+	        } else {
+	            var confirmResult = confirm('정말로 게시글을 삭제 하시겠습니까?');
+	            if (confirmResult) {
+	                $('#deleteForm').submit();
+	            } else {
+	                e.preventDefault();
+	            }
+	        }
+	    });
+	});
+
+	$("a#goList").click(function(e){
+		e.preventDefault();
+		location.href = "/board/boardlist" + paging;
+	});
+</script>
+<script type="text/javascript" th:inline="javascript">
+	$(document).ready(function(){
+		console.log("JS Test");
+		
+		let bnoValue = /*[[${board.getBno()}]]*/'기본값';
+		/*<![CDATA[*/
+			let user_name = /*[[${session.memberLogin.user_name}]]*/'default';
+		/*]]>*/
+		console.log("bnoValue = " + bnoValue);
+		
+		// console.log(replyService);
+		let replyUL = $(".replies");
+		let pageNum = 1;
+		showList(pageNum);
+		
+		$(".register").on("click", function(e){
+			e.preventDefault();
+			$(".register-form").show();
+			// register 본인은 숨김
+			$(this).hide();
+		});
+		// 취소 - form을 없애고 register 살림
+		$(".cancel").on("click", function(e, f, g){
+			e.preventDefault();
+			$(".register-form").hide();
+			$(".register").show();
+			// console.log(f);
+			// console.log(g);
+		});
+		
+		$(".finish").on("click", function(e){
+			e.preventDefault();
+			// 댓글 작성자, 댓글 내용
+			//let user_name = $("input[name='user_name']").val();
+			let reply = $("textarea[name='reply']").val();
+			// Robot333 넣고 등록 버튼 누르면 콘솔에 나와야 함
+			console.log("user_name : " + user_name);
+			// 내용에 bbbaaa 넣고 등록 버튼 누르면 콘솔에 나와야 함
+			console.log("reply : " + reply);
+			
+			// 작성자나 댓글이 없으면 그냥 무시
+			if(user_name == "" || reply == ""){
+				alert("작성자와 내용을 입력하세요");
+				return;
+			}
+			// K, V
+			// replyService는 reply.js에서 ..
+			replyService.add({bno: bnoValue, reply: reply, user_name: user_name},
+				function(result){
+					alert(result);
+					// val("") -> 빈값 넣기, placeholder는 
+					$("input[name='user_name']").val("");
+					$("textarea[name='reply']").val("");
+					$(".register-form").hide();
+					$(".register").show();
+					showList(pageNum);
+				}
+			);
+		});
+		
+		// 삭제 클릭하면 replies 아래 a 아래 remove 누르면 실행 
+		$(".replies").on("click", "a.remove", function(e){
+			e.preventDefault();
+			// href 속성 가져오기
+			let rnoValue = $(this).attr("href");
+			console.log("rnoValue : " + rnoValue);
+			// rnoValue를 주고 함수 실행
+			replyService.remove(rnoValue,
+				function(result){
+					alert(result);
+					showList(pageNum);
+			});
+		});
+		
+		// 수정
+		let check = false;
+		$(".replies").on("click", "a.modify", function(e){
+			e.preventDefault();
+			// 하나만 수정하도록
+			if(check){
+				alert("수정 중인 댓글이 있습니다.");
+				return;
+			}
+			
+			// 1. p태그를 textarea로 변경(기존 내용을 textarea로 옮겨야 함)
+			// 2. 수정완료 버튼 나오도록.
+			
+			// 현재 댓글달고 있는 댓글 번호
+			let rnoValue = $(this).attr("href");
+			let replyTag = $("#reply" + rnoValue);
+			// replyTag를 textarea로 변경해서 내용 넣기
+			// class를 준 이유 : 수정중인 댓글과 나머지 댓글들의 다름을 구현하려고
+			replyTag.html("<textarea style='width: 80%; resize: none;' class='" + rnoValue + "'>"
+				+ replyTag.text() + "</textarea>");
+			// 수정버튼 감추기
+			$(this).hide();
+			
+			// 여러개 finish 선택 후 반복문
+			let finishes = $(".finish");
+			for(let i=0; i<finishes.length; i++){
+				// finishes들에 href속성 가져와서 rnoValue와 같으면..
+				if($(finishes[i]).attr("href") == rnoValue){
+					$(finishes[i]).show();
+					check = true;
+					break;
+				}
+			}
+		});
+		
+		// 수정완료
+		$(".replies").on("click", "a.finish", function(e){
+			e.preventDefault();
+			let rnoValue = $(this).attr("href");
+			// 클래스로 줬으므로
+			let newReply = $("." + rnoValue).val();
+			// 새로운 댓글이 비었으면 중단
+			if(newReply == ""){return;}
+			
+			replyService.update({rno:rnoValue, reply:newReply},
+				function(result){
+					alert(result);
+					check = false;
+					showList(pageNum);
+				}
+			);
+		});
+		
+		function showList(page){
+			replyService.getList({
+				bno: bnoValue, page: page || 1
+			}, function(list){
+				let str = "";
+				// list가 빈것이 오면 replyUL을 빈깡통으로 만들고 리턴.
+				if(list == null || list.length == 0){
+					replyUL.html("");
+					console.log("댓글 없음");
+					return;
+				}
+				console.log("There are some replies");
+				for(let i=0, len=list.length; i<len; i++){
+					console.log(list[i].user_name);
+					str += "<li style='display:block' data-rno='" + list[i].rno + "'>";
+					str += list[i].user_name + "(" + list[i].replydate + ")";
+					str += "<p id='reply" + list[i].rno + "'>" + list[i].reply + "</p>";
+					
+					str += "<div style='text-align: right;'>";
+					str += "<a class='modify' href='" + list[i].rno + "'>수정</a>";
+					str += "<a class='finish' href='" + list[i].rno + "' style='display:none;'>수정완료</a>";
+					str += "&nbsp;&nbsp;";
+					str += "<a class='remove' href='" + list[i].rno + "'>삭제</a>";
+					str += "</div>";
+					
+					str += "<div class='line'></div>";
+					str += "</li>";
+				}
+				replyUL.html(str);
+			});
+		}
+
+	});
+</script>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

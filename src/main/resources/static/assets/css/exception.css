@@ -1,0 +1,27 @@
+body {
+	padding: 0;
+	margin: 0;
+}
+
+#exception {
+	position: relative;
+	height: 100vh;
+}
+
+#exception .exception-cls {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	transform: translate(-50%, -50%);
+}
+
+.exception-cls {
+	max-width: 520px;
+	width: 100%;
+	line-height: 1.4;
+	text-align: center;
+	font-family: 'Montserrat', sans-serif;
+	font-size: 36px;
+	font-weight: 200;
+	color: #211b19;
+}

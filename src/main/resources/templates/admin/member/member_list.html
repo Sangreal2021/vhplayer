@@ -1,0 +1,305 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Member List</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link rel="stylesheet" href="/assets/adminassets/css/main.css" />
+	<link rel="stylesheet" href="/assets/adminassets/css/bootstrap.css" />
+	<link rel="shortcut icon" type="image/x-icon" href="/assets/favi/WoW.ico" />
+	<style type="text/css">
+		body a{
+			text-decoration: none;
+		}
+		#searchForm {
+			width: 100%;
+		}
+	</style>
+</head>
+<body class="subpage">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<section id="header">
+			<div th:if="${session.memberLogin == null}" style="display: flex; justify-content: flex-end;">
+				<p style="margin-right: 10px; line-height: 30px; margin: 0;">로그인 되어있지 않습니다.</p>
+			    <form th:action="@{/login/loginForm#login_page}" method="get">
+			        <input type="submit" value="Log-In" style="width: 80px; height: 30px; text-align: center; padding: 0; margin-left: 10px;">
+			    </form>
+			</div>
+			<div th:if="${session.memberLogin != null}" style="display: flex; justify-content: flex-end; align-items: center;">
+				<p style="margin-right: 10px; line-height: 30px; margin: 0; color: white;"><span th:text="${session.memberLogin.user_name}"></span>님 환영합니다</p>
+				<form th:action="@{/login/logout}" method="post" style="margin-left: 10px;">
+					<input type="submit" value="LogOut" id="logout" style="width: 80px; height: 30px; text-align: center; padding: 0;">
+				</form>
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="col-12">
+
+						<!-- Logo -->
+						<h1><a href="/index" id="logo">Home</a></h1>
+
+						<!-- Nav -->
+						<nav id="nav">
+							<a href="/admin/index_admin">AdminHome</a>
+							<a href="/admin/upload/uploadAjax">Upload</a>
+							<a href="/admin/member/member_list">Member List</a>
+						</nav>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Content -->
+		<section id="content">
+			<div class="container">
+				<div class="row">
+					<div class="col-3 col-12-medium">
+
+						<!-- Sidebar -->
+						<section>
+							<header>
+								<h2>Notice</h2>
+							</header>
+							<ul class="link-list">
+								<li><a href="/board/boardlist">음원 신청 확인</a></li>
+								<li><a href="/board/boardlist">게시판 관리</a></li>
+								<li><a href="#">계정 비활성 유저 확인</a></li>
+							</ul>
+						</section>
+						<section>
+							<header>
+								<h2>Coding Plan</h2>
+							</header>
+							<p>
+								Refactoring this site
+							</p>
+							<ul class="link-list">
+								<li><a href="#">BCript 적용</a></li>
+								<li><a href="#">Player 파형 추가</a></li>
+								<li><a href="#">index에 Javascript로 꾸미기</a></li>
+								<li><a href="#">수정, 삭제를 본인 및 관리자만 가능하도록</a></li>
+								<li><a href="#">코드정리 및 css, js 분리</a></li>
+							</ul>
+						</section>
+
+					</div>
+					<div class="col-9 col-12-medium imp-medium">
+
+						<!-- Main Content -->
+						<section>
+							<header>
+								<h2><a href="/admin/member/member_list">Member List</a></h2>
+								<h3>회원 정보 관리</h3>
+							</header>
+							<div class="table-wrapper col-md-12">
+								<table class="table table-sm table-striped table-hover table-borderless">
+									<thead class="table-light">
+										<tr class="tHead">
+											<th class="uno">번호</th>
+											<th class="user_email">이메일</th>
+											<th class="user_pw">비밀번호</th>
+											<th class="user_name">닉네임</th>
+											<th class="user_auth">권한</th>
+											<th class="delete_yn">계정 활성화</th>
+											<th class="regdate">작성일</th>
+											<th class="updatedate">수정일</th>
+										</tr>
+									</thead>
+									<tbody>
+										<th:block th:each="member:${list}">
+											<tr class="tBody" th:object="${member}">
+												<td class="uno" th:text="*{uno}"></td>
+												<td class="user_email"><a id="goGet" th:text="*{user_email}" th:href="*{uno}"></a></td>
+												<td class="user_pw" th:text="*{user_pw}"></td>
+												<th class="user_name" th:text="*{user_name}"></th>
+												<th class="user_auth" th:text="*{user_auth == '1' ? 'Admin' : 'User'}"></th>
+												<th class="delete_yn" th:text="*{delete_yn == 0 ? 'Active' : 'Inactive'}"></th>
+												<td class="regdate" th:text="*{regdate}"></td>
+												<td class="updatedate" th:text="*{updatedate}"></td>
+											</tr>
+										</th:block>
+									</tbody>
+									<tfoot>
+										
+									</tfoot>
+								</table>
+								
+								<form method="get" action="/admin/member/member_list" id="searchForm">
+									<div class="fields" style="text-align: center;">
+										<div class="field">
+											<div id="searchWrap" th:object="${pageMaker}">
+												<select name="type" th:object="${criteria}">
+													<option value="">검색기준</option>
+													<option value="E" th:selected="*{type} == 'E'">이메일</option>
+													<option value="N" th:selected="*{type} == 'N'">닉네임</option>
+													<option value="A" th:selected="*{type} == 'A'">권한</option>
+													<option value="EN" th:selected="*{type} == 'EN'">이메일 또는 이름</option>
+													<option value="EA" th:selected="*{type} == 'EA'">이메일 또는 권한</option>
+													<option value="ENA" th:selected="*{type} == 'ENA'">이메일 또는 이름 또는 권한</option>
+												</select>
+												<input id="keyword" name="keyword" type="text" th:value="*{cri.keyword}">
+												<a href="#">검색</a>
+											</div>
+										</div>
+									</div>
+								</form>
+								
+								<div th:object="${pageMaker}">
+									<div class="big-width" style="text-align: center">
+										<a class="changePage" th:if="*{prev}" th:href="*{startPage - 1}">&lt;</a>
+										<th:block th:each="num : ${#numbers.sequence(pageMaker.getStartPage(), pageMaker.getEndPage())}">
+											<!-- code는 그냥 줄거 없을때 쓰는 것 -->
+											<code th:if="${pageMaker.cri.getPageNum() == num}" th:text="${num}"></code>
+											<a class="changePage" th:unless="${pageMaker.cri.getPageNum() == num}" th:text="${num}" th:href="${num}"></a>
+										</th:block>
+										<a class="changePage" th:if="*{next}" th:href="*{endPage + 1}">&gt;</a>
+										
+										<!-- cri : pageMaker 아래 cri -->
+										<form action="/admin/member/member_list" th:object="${criteria}" name="pageForm">
+											<!-- pageNum : href에 걸린 startPage-1 or endPage+1 -->
+											<input type="hidden" name="pageNum" th:field="*{pageNum}">
+											<input type="hidden" name="amount" th:field="*{amount}">
+											<input type="hidden" name="type" th:field="*{type}">
+											<input type="hidden" name="keyword" th:field="*{keyword}">
+										</form>
+									</div>
+								</div>
+							</div>
+						</section>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+		<section id="footer">
+			<div class="container">
+				<div class="row">
+					<div class="col-8 col-12-medium">
+
+						<!-- Links -->
+							<section>
+								<h2>Links to Important Stuff</h2>
+								<div>
+									<div class="row">
+										<div class="col-3 col-12-small">
+											<ul class="link-list last-child">
+												<li><a href="#">Neque amet dapibus</a></li>
+												<li><a href="#">Sed mattis quis rutrum</a></li>
+												<li><a href="#">Accumsan suspendisse</a></li>
+												<li><a href="#">Eu varius vitae magna</a></li>
+											</ul>
+										</div>
+										<div class="col-3 col-12-small">
+											<ul class="link-list last-child">
+												<li><a href="#">Neque amet dapibus</a></li>
+												<li><a href="#">Sed mattis quis rutrum</a></li>
+												<li><a href="#">Accumsan suspendisse</a></li>
+												<li><a href="#">Eu varius vitae magna</a></li>
+											</ul>
+										</div>
+										<div class="col-3 col-12-small">
+											<ul class="link-list last-child">
+												<li><a href="#">Neque amet dapibus</a></li>
+												<li><a href="#">Sed mattis quis rutrum</a></li>
+												<li><a href="#">Accumsan suspendisse</a></li>
+												<li><a href="#">Eu varius vitae magna</a></li>
+											</ul>
+										</div>
+										<div class="col-3 col-12-small">
+											<ul class="link-list last-child">
+												<li><a href="#">Neque amet dapibus</a></li>
+												<li><a href="#">Sed mattis quis rutrum</a></li>
+												<li><a href="#">Accumsan suspendisse</a></li>
+												<li><a href="#">Eu varius vitae magna</a></li>
+											</ul>
+										</div>
+									</div>
+								</div>
+							</section>
+
+					</div>
+					<div class="col-4 col-12-medium imp-medium">
+
+						<!-- Blurb -->
+							<section>
+								<h2>An Informative Text Blurb</h2>
+								<p>
+									Duis neque nisi, dapibus sed mattis quis, rutrum accumsan sed. Suspendisse eu
+									varius nibh. Suspendisse vitae magna eget odio amet mollis. Duis neque nisi,
+									dapibus sed mattis quis, sed rutrum accumsan sed. Suspendisse eu varius nibh
+									lorem ipsum amet dolor sit amet lorem ipsum consequat gravida justo mollis.
+								</p>
+							</section>
+
+					</div>
+				</div>
+			</div>
+		</section>
+
+		<!-- Copyright -->
+		<div id="copyright">
+			&copy; Untitled. All rights reserved. | Design: <a href="http://html5up.net">HTML5 UP</a>
+		</div>
+
+	</div>
+
+	<!-- Scripts -->
+	<script src="/assets/adminassets/js/jquery.min.js"></script>
+	<script src="/assets/adminassets/js/browser.min.js"></script>
+	<script src="/assets/adminassets/js/breakpoints.min.js"></script>
+	<script src="/assets/adminassets/js/util.js"></script>
+	<script src="/assets/adminassets/js/main.js"></script>
+	<script type="text/javascript" th:src="@{/assets/adminassets/js/jquery-3.6.4.js}"></script>
+	<script type="text/javascript" th:inline="javascript">
+		let uno = /*[[${uno}]]*/'기본값';
+		console.log(uno);
+		let pageForm = $(document.pageForm);
+		let paging = /*[[${pageMaker.cri.listLink}]]*/'기본값';
+		
+		$(document).ready(function(){
+			if(uno == ''){
+				return;
+			}
+			if(parseInt(uno) > 0){
+				alert("Bulletin " + parseInt(uno) + " was registered.");
+			}
+		});
+		
+		$("a.changePage").click(function(e){
+			e.preventDefault();
+			let pageNum = $(this).attr("href");
+			pageForm.find("input[name='pageNum']").val(pageNum);
+			pageForm.submit();
+		});
+		
+		$("a#goGet").on("click", function(e){
+			e.preventDefault();
+			location.href = "/admin/member/get" + paging + "&uno=" + $(this).attr("href");
+		});
+		
+		$("#searchForm a").on("click", function(e){
+			e.preventDefault();
+			// console.log("searchForm a 눌림");
+			
+			let searchForm = $("#searchForm");
+			
+			if(!searchForm.find("option:selected").val()){
+				alert("검색종류를 선택하세요");
+				return false;
+			}
+			if(!searchForm.find("input[name='keyword']").val()){
+				alert("검색어를 입력하세요");
+				return false;
+			}
+			searchForm.submit();
+		});
+	</script>
+</body>
+</html>

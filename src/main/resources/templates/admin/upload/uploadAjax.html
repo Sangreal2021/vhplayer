@@ -1,0 +1,279 @@
+<!DOCTYPE HTML>
+<html>
+	<head>
+		<title>Upload</title>
+		<meta charset="utf-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+		<link rel="stylesheet" href="/assets/adminassets/css/main.css" />
+		<link rel="stylesheet" href="/assets/adminassets/css/bootstrap.css" />
+		<link rel="shortcut icon" type="image/x-icon" href="/assets/favi/WoW.ico" />
+	</head>
+	<body class="subpage">
+		<div id="page-wrapper">
+
+			<!-- Header -->
+			<section id="header">
+				<div th:if="${session.memberLogin == null}" style="display: flex; justify-content: flex-end;">
+					<p style="margin-right: 10px; line-height: 30px; margin: 0;">로그인 되어있지 않습니다.</p>
+				    <form th:action="@{/login/loginForm#login_page}" method="get">
+				        <input type="submit" value="Log-In" style="width: 80px; height: 30px; text-align: center; padding: 0; margin-left: 10px;">
+				    </form>
+				</div>
+				<div th:if="${session.memberLogin != null}" style="display: flex; justify-content: flex-end; align-items: center;">
+					<p style="margin-right: 10px; line-height: 30px; margin: 0; color: white;"><span th:text="${session.memberLogin.user_name}"></span>님 환영합니다</p>
+					<form th:action="@{/login/logout}" method="post" style="margin-left: 10px;">
+						<input type="submit" value="LogOut" id="logout" style="width: 80px; height: 30px; text-align: center; padding: 0;">
+					</form>
+				</div>
+				<div class="container">
+					<div class="row">
+						<div class="col-12">
+
+							<!-- Logo -->
+							<h1><a href="/index" id="logo">Home</a></h1>
+
+							<!-- Nav -->
+								<nav id="nav">
+									<a href="/admin/index_admin">AdminHome</a>
+									<a href="/admin/upload/uploadAjax">Upload</a>
+									<a href="/admin/member/member_list">Member List</a>
+								</nav>
+
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Content -->
+			<section id="content">
+				<div class="container">
+					<div class="row">
+						<div class="col-3 col-12-medium">
+	
+							<!-- Sidebar -->
+							<section>
+								<header>
+									<h2>Notice</h2>
+								</header>
+								<ul class="link-list">
+									<li><a href="/board/boardlist">음원 신청 확인</a></li>
+									<li><a href="/board/boardlist">게시판 관리</a></li>
+									<li><a href="#">계정 비활성 유저 확인</a></li>
+								</ul>
+							</section>
+							<section>
+								<header>
+									<h2>Coding Plan</h2>
+								</header>
+								<p>
+									Refactoring this site
+								</p>
+								<ul class="link-list">
+									<li><a href="#">BCript 적용</a></li>
+									<li><a href="#">Player 파형 추가</a></li>
+									<li><a href="#">index에 Javascript로 꾸미기</a></li>
+									<li><a href="#">수정, 삭제를 본인 및 관리자만 가능하도록</a></li>
+									<li><a href="#">코드정리 및 css, js 분리</a></li>
+								</ul>
+							</section>
+	
+						</div>
+						<div class="col-9 col-12-medium imp-medium">
+	
+							<!-- Main Content -->
+							<section>
+								<header>
+									<h2>Upload Files</h2>
+									<h3>음원 업로드</h3>
+								</header>
+								<hr>
+								<div class="uploadDiv">
+									<input type="file" name="uploadFile" multiple="multiple" style="width: 200pt;" />
+								</div>
+								<hr>
+								<div class="uploadResult">
+									<ul></ul>
+								</div>
+								<hr>
+								<button id="uploadBtn" style="width: 100pt;">Submit</button>
+								<hr>
+								<!-- 파일경로 및 설정 -->
+								<header>
+									<h4>파일경로 및 설정</h4>
+								</header>
+								<p>
+									음원 저장 경로 : /static/assets/songs<br>
+									이미지 저장 경로 : /static/assets/images/player
+								</p>
+								<ul class="link-list">
+									<li>음원명, 가사 추가시 : /static/assets/js/music_list.js</li>
+									<li>Player css : /static/assets/css/style.css</li>
+									<li>Player 설정 js : /static/assets/js/script.js</li>
+								</ul>
+							</section>
+	
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Footer -->
+			<section id="footer">
+				<div class="container">
+					<div class="row">
+						<div class="col-8 col-12-medium">
+
+							<!-- Links -->
+								<section>
+									<h2>Links to Important Stuff</h2>
+									<div>
+										<div class="row">
+											<div class="col-3 col-12-small">
+												<ul class="link-list last-child">
+													<li><a href="#">Neque amet dapibus</a></li>
+													<li><a href="#">Sed mattis quis rutrum</a></li>
+													<li><a href="#">Accumsan suspendisse</a></li>
+													<li><a href="#">Eu varius vitae magna</a></li>
+												</ul>
+											</div>
+											<div class="col-3 col-12-small">
+												<ul class="link-list last-child">
+													<li><a href="#">Neque amet dapibus</a></li>
+													<li><a href="#">Sed mattis quis rutrum</a></li>
+													<li><a href="#">Accumsan suspendisse</a></li>
+													<li><a href="#">Eu varius vitae magna</a></li>
+												</ul>
+											</div>
+											<div class="col-3 col-12-small">
+												<ul class="link-list last-child">
+													<li><a href="#">Neque amet dapibus</a></li>
+													<li><a href="#">Sed mattis quis rutrum</a></li>
+													<li><a href="#">Accumsan suspendisse</a></li>
+													<li><a href="#">Eu varius vitae magna</a></li>
+												</ul>
+											</div>
+											<div class="col-3 col-12-small">
+												<ul class="link-list last-child">
+													<li><a href="#">Neque amet dapibus</a></li>
+													<li><a href="#">Sed mattis quis rutrum</a></li>
+													<li><a href="#">Accumsan suspendisse</a></li>
+													<li><a href="#">Eu varius vitae magna</a></li>
+												</ul>
+											</div>
+										</div>
+									</div>
+								</section>
+
+						</div>
+						<div class="col-4 col-12-medium imp-medium">
+
+							<!-- Blurb -->
+								<section>
+									<h2>An Informative Text Blurb</h2>
+									<p>
+										Duis neque nisi, dapibus sed mattis quis, rutrum accumsan sed. Suspendisse eu
+										varius nibh. Suspendisse vitae magna eget odio amet mollis. Duis neque nisi,
+										dapibus sed mattis quis, sed rutrum accumsan sed. Suspendisse eu varius nibh
+										lorem ipsum amet dolor sit amet lorem ipsum consequat gravida justo mollis.
+									</p>
+								</section>
+
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Copyright -->
+			<div id="copyright">
+				&copy; Untitled. All rights reserved. | Design: <a href="http://html5up.net">HTML5 UP</a>
+			</div>
+
+		</div>
+
+		<!-- Scripts -->
+		<script src="/assets/adminassets/js/jquery.min.js"></script>
+		<script src="/assets/adminassets/js/browser.min.js"></script>
+		<script src="/assets/adminassets/js/breakpoints.min.js"></script>
+		<script src="/assets/adminassets/js/util.js"></script>
+		<script src="/assets/adminassets/js/main.js"></script>
+		<script type="text/javascript" src="/assets/adminassets/js/jquery-3.6.4.js"></script>
+		<script type="text/javascript">
+			$(document).ready(function(){
+				// file extension test를 위한 구현
+				// .*? - 앞에 모두, exe/sh/zip/alz로 끝나는 파일 선택
+				let regex = new RegExp("(.*?)\.(exe|sh|zip|alz|gz)$");
+				let maxSize = 55242880; // 55MB
+				
+				// 웹브라우저에서 thumbnail 처리
+				// 업로드 완료 후에 업로드 부분 초기화(첨부파일 초기화)
+				// 첨부 전 객체를 복사한 후 업로드 후에 덮어씌운다.
+				let cloneObj = $(".uploadDiv").clone();
+				let uploadResult = $(".uploadResult ul");
+				
+				function showUploadFile(fileArray){
+					let str = "";
+					// array에서 하나씩 꺼내서 함수에 넣기
+					// attachVO 리스트를 줄 예정 -> 화면에 li 붙어서 나옴
+					$(fileArray).each(function(i, obj){
+						if(obj.image){
+							// str += "<li>" + (i+1) + "." + obj.fileName + "</li>";
+							let fileCallPath = encodeURIComponent(obj.uploadPath + "/s_" + obj.uuid + "_" + obj.fileName);
+							console.log(fileCallPath);
+							str += "<li><img src='/upload/display?fileName=" + fileCallPath + "'>" + obj.fileName + "</li>";
+						}else {
+							// 이미지 파일이 아니면 attach.png 클립을 보여줌
+							str += "<li><img src='/assets/img/attach.png' width='32px'>" + (i+1) + "." + obj.fileName + "</li>";
+						}
+					});
+					uploadResult.append(str);
+				}
+				
+				// true이면 업로드 허용, false이면 업로드 불가
+				function checkExtension(fileName, fileSize){
+					if(regex.test(fileName)){
+						alert("File Type Mismatch!");
+						return false;
+					}
+					if(fileSize >= maxSize){
+						alert("File Size Mismatch!");
+						return false;
+					}
+					return true;
+				}
+				
+				$("#uploadBtn").on("click", function(e){
+					let inputFile = $("input[name='uploadFile']");
+					console.log(inputFile);
+					let files = inputFile[0].files;
+					console.log(files);
+					
+					// formData를 이용, FormData에 file 추가하기
+					let formData = new FormData();
+					for(let i=0; i<files.length; i++){
+						// checkExtension에 걸리면 안함!
+						if(!checkExtension(files[i].name, files[i].size)){
+							return;
+						}
+						formData.append("uploadFile", files[i]);
+					}
+					
+					$.ajax({
+						url: "uploadAjaxAction",
+						processData: false,
+						contentType: false,
+						data: formData,
+						type: "POST",
+						success: function(result){
+							console.log(result);
+							showUploadFile(result);
+							inputFile.val("");
+						},
+						error: function(){
+							alert("Error!");
+						}
+					});
+				});
+			});
+		</script>
+	</body>
+</html>

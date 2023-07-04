@@ -1,0 +1,313 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Board</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link rel="stylesheet" href="/assets/css/main.css" />
+	<!-- <link rel="stylesheet" href="/assets/css/bootstrap/bootstrap.css" /> -->
+	<link rel="shortcut icon" type="image/x-icon" href="/assets/favi/WoW.ico" />
+	<style type="text/css">
+		#searchForm {
+			width: 50%;
+		}
+	</style>
+</head>
+<body class="no-sidebar is-preload">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<section id="header">
+			<div th:if="${session.memberLogin == null}" style="display: flex; justify-content: flex-end;">
+				<p style="margin-right: 10px; line-height: 30px; margin: 0;">로그인 되어있지 않습니다.</p>
+			    <form th:action="@{/login/loginForm#login_page}" method="get">
+			        <input type="submit" value="Log-In" style="width: 80px; height: 30px; text-align: center; padding: 0; margin-left: 10px;">
+			    </form>
+			</div>
+			<div th:if="${session.memberLogin != null}" style="display: flex; justify-content: flex-end; align-items: center;">
+				<p style="margin-right: 10px; line-height: 30px; margin: 0;"><span th:text="${session.memberLogin.user_name}"></span>님 환영합니다</p>
+				<form th:action="@{/login/logout}" method="post" style="margin-left: 10px;">
+					<input type="submit" value="LogOut" id="logout" style="width: 80px; height: 30px; text-align: center; padding: 0;">
+				</form>
+			</div>
+			<div class="container">
+
+				<!-- Logo -->
+				<h1 id="logo"><a href="/board/boardlist">Board</a></h1>
+				<p>Free to Talk</p>
+
+				<!-- Nav -->
+				<nav id="nav">
+					<ul>
+						<li><a class="icon solid fa-home" href="/index"><span>Home</span></a></li>
+						<li th:if="${session.memberLogin != null and session.memberLogin.user_auth == '1'}"><a class="icon solid fa-home" href="/admin/index_admin"><span>Admin</span></a></li>
+						<li><a class="icon solid fa-cog" href="/player/playlist"><span>Player</span></a></li>
+						<li><a class="icon solid fa-retweet" href="/board/boardlist"><span>Board</span></a></li>
+						<li><a class="icon solid fa-sitemap" href="/login/loginForm"><span>Sign up</span></a></li>
+						<li th:if="${session.memberLogin != null}"><a class="icon fa-chart-bar" href="/mypage/myPageForm"><span>My Page</span></a></li>
+					</ul>
+				</nav>
+
+			</div>
+		</section>
+
+		<!-- Main -->
+		<section id="main">
+			<div class="container">
+				<div id="content">
+
+					<!-- Table -->
+					<article class="box post">
+						<header>
+							<h2>듣고싶은 <strong>노래, bgm 등</strong>을<br/>
+							게시글에 남겨주세요!</h2>
+						</header>
+						<h3 th:if="${session.memberLogin != null}"><a href="/board/register">글쓰기</a></h3>
+						<h3><a href="/board/boardlist">목록</a></h3>
+						<div class="table-wrapper col-md-10">
+							<table class="table table-sm table-striped table-hover table-borderless">
+								<thead class="table-light">
+									<tr class="tHead">
+										<th class="bno">번호</th>
+										<th class="title">제목</th>
+										<th class="content">내용</th>
+										<th class="user_name">작성자</th>
+										<th class="regdate">작성일</th>
+										<th class="updatedate">수정일</th>
+									</tr>
+								</thead>
+								<tbody>
+									<th:block th:each="board:${boardlist}">
+										<tr class="tBody" th:object="${board}">
+											<td class="bno" th:text="*{bno}"></td>
+											<!-- <td class="title"><a th:text="*{title}" th:href="@{/board/get(bno=*{bno})}"></a></td> -->
+											<td class="title">
+											    <div th:if="${session.memberLogin != null}">
+											        <a id="goGet" th:text="*{title}" th:href="*{bno}"></a>
+											    </div>
+											    <div th:if="${session.memberLogin == null}">
+											        <span th:text="*{title}"></span>
+											    </div>
+											</td>
+											<td class="content" th:text="*{content}"></td>
+											<th class="user_name" th:text="*{user_name}"></th>
+											<td class="regdate" th:text="*{regdate}"></td>
+											<td class="updatedate" th:text="*{updatedate}"></td>
+										</tr>
+									</th:block>
+								</tbody>
+								<tfoot>
+									
+								</tfoot>
+							</table>
+							
+							<div class="fields" style="display: flex; justify-content: center; align-items: center;">
+								<form method="get" action="/board/boardlist" id="searchForm">
+									<div class="field" style="display: flex; justify-content: center;">
+										<div id="searchWrap" th:object="${pageMaker}" style="display: flex; gap: 10px; width: 100%;">
+											<select name="type" th:object="${criteria}" style="flex: 1.5;">
+												<option value="">검색기준</option>
+												<option value="T" th:selected="*{type} == 'T'">제목</option>
+												<option value="C" th:selected="*{type} == 'C'">내용</option>
+												<option value="U" th:selected="*{type} == 'U'">작성자</option>
+												<option value="TC" th:selected="*{type} == 'TC'">제목 또는 내용</option>
+												<option value="TU" th:selected="*{type} == 'TU'">제목 또는 작성자</option>
+												<option value="TCU" th:selected="*{type} == 'TCU'">제목 또는 내용 또는 작성자</option>
+											</select>
+											<input id="keyword" name="keyword" type="text" th:value="*{cri.keyword}" style="flex: 2;">
+											<a href="#" style="align-self: center;">검색</a>
+										</div>
+									</div>
+								</form>
+							</div>
+							
+							<div th:object="${pageMaker}">
+								<div class="big-width" style="text-align: center">
+									<a class="changePage" th:if="*{prev}" th:href="*{startPage - 1}">&lt;</a>
+									<th:block th:each="num : ${#numbers.sequence(pageMaker.getStartPage(), pageMaker.getEndPage())}">
+										<!-- code는 그냥 줄거 없을때 쓰는 것 -->
+										<code th:if="${pageMaker.cri.getPageNum() == num}" th:text="${num}"></code>
+										<a class="changePage" th:unless="${pageMaker.cri.getPageNum() == num}" th:text="${num}" th:href="${num}"></a>
+									</th:block>
+									<!-- '>' 표시가 있는 이유는 Controller에서 123까지 지정하였으므로 -->
+									<a class="changePage" th:if="*{next}" th:href="*{endPage + 1}">&gt;</a>
+									
+									<!-- cri : pageMaker 아래 cri -->
+									<form action="/board/boardlist" th:object="${criteria}" name="pageForm">
+										<!-- pageNum : href에 걸린 startPage-1 or endPage+1 -->
+										<input type="hidden" name="pageNum" th:field="*{pageNum}">
+										<input type="hidden" name="amount" th:field="*{amount}">
+										<input type="hidden" name="type" th:field="*{type}">
+										<input type="hidden" name="keyword" th:field="*{keyword}">
+									</form>
+								</div>
+							</div>
+						</div>
+					</article>
+
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+			<section id="footer">
+				<div class="container">
+					<header>
+						<h2>Questions or comments? <strong>Get in touch:</strong></h2>
+					</header>
+					<div class="row">
+						<div class="col-6 col-12-medium">
+							<section>
+								<form method="post" action="#">
+									<div class="row gtr-50">
+										<div class="col-6 col-12-small">
+											<input name="name" placeholder="Name" type="text" />
+										</div>
+										<div class="col-6 col-12-small">
+											<input name="email" placeholder="Email" type="text" />
+										</div>
+										<div class="col-12">
+											<textarea name="message" placeholder="Message"></textarea>
+										</div>
+										<div class="col-12">
+											<a href="#" class="form-button-submit button icon solid fa-envelope">Send Message</a>
+										</div>
+									</div>
+								</form>
+							</section>
+						</div>
+						<div class="col-6 col-12-medium">
+							<section>
+								<p>Erat lorem ipsum veroeros consequat magna tempus lorem ipsum consequat Phaselamet
+								mollis tortor congue. Sed quis mauris sit amet magna accumsan tristique. Curabitur
+								leo nibh, rutrum eu malesuada.</p>
+								<div class="row">
+									<div class="col-6 col-12-small">
+										<ul class="icons">
+											<li class="icon solid fa-home">
+												1234 Somewhere Road<br />
+												Nashville, TN 00000<br />
+												USA
+											</li>
+											<li class="icon solid fa-phone">
+												(000) 000-0000
+											</li>
+											<li class="icon solid fa-envelope">
+												<a href="#">info@untitled.tld</a>
+											</li>
+										</ul>
+									</div>
+									<div class="col-6 col-12-small">
+										<ul class="icons">
+											<li class="icon brands fa-twitter">
+												<a href="#">@untitled</a>
+											</li>
+											<li class="icon brands fa-instagram">
+												<a href="#">instagram.com/untitled</a>
+											</li>
+											<li class="icon brands fa-dribbble">
+												<a href="#">dribbble.com/untitled</a>
+											</li>
+											<li class="icon brands fa-facebook-f">
+												<a href="#">facebook.com/untitled</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</section>
+						</div>
+					</div>
+				</div>
+				<div id="copyright" class="container">
+					<ul class="links">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</section>
+
+	</div>
+
+	<!-- Scripts -->
+		<script src="/assets/js/jquery.min.js"></script>
+		<script src="/assets/js/jquery.dropotron.min.js"></script>
+		<script src="/assets/js/browser.min.js"></script>
+		<script src="/assets/js/breakpoints.min.js"></script>
+		<script src="/assets/js/util.js"></script>
+		<script src="/assets/js/main.js"></script>
+
+</body>
+<script type="text/javascript" th:src="@{/assets/js/jquery-3.6.4.js}"></script>
+<script type="text/javascript" th:inline="javascript">
+	let bno = /*[[${bno}]]*/'기본값';
+	console.log(bno);
+	let pageForm = $(document.pageForm);
+	let paging = /*[[${pageMaker.cri.listLink}]]*/'기본값';
+	
+	$(document).ready(function(){
+		if(bno == ''){
+			return;
+		}
+		if(parseInt(bno) > 0){
+			alert("Bulletin " + parseInt(bno) + " was registered.");
+		}
+	});
+	
+	$("a.changePage").click(function(e){
+		e.preventDefault();
+		let pageNum = $(this).attr("href");
+		pageForm.find("input[name='pageNum']").val(pageNum);
+		pageForm.submit();
+	});
+	
+	$("a#goGet").on("click", function(e){
+		e.preventDefault();
+		location.href = "/board/get" + paging + "&bno=" + $(this).attr("href");
+	});
+	
+	$("#searchForm a").on("click", function(e){
+		e.preventDefault();
+		// console.log("searchForm a 눌림");
+		
+		let searchForm = $("#searchForm");
+		
+		if(!searchForm.find("option:selected").val()){
+			alert("검색종류를 선택하세요");
+			return false;
+		}
+		if(!searchForm.find("input[name='keyword']").val()){
+			alert("검색어를 입력하세요");
+			return false;
+		}
+		searchForm.submit();
+	});
+</script>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

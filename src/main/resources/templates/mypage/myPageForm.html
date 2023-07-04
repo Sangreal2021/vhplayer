@@ -1,0 +1,215 @@
+<!DOCTYPE HTML>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+	<title>Board</title>
+	<meta charset="utf-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+	<meta name="description" content="" />
+	<meta name="keywords" content="" />
+	<link rel="stylesheet" href="/assets/css/main.css" />
+	<!-- <link rel="stylesheet" href="/assets/css/bootstrap/bootstrap.css" /> -->
+	<link rel="shortcut icon" type="image/x-icon" href="/assets/favi/WoW.ico" />
+	<style type="text/css">
+		body input {
+			border: none;
+		}
+	</style>
+</head>
+<body class="no-sidebar is-preload">
+	<div id="page-wrapper">
+
+		<!-- Header -->
+		<section id="header">
+			<div th:if="${session.memberLogin == null}" style="display: flex; justify-content: flex-end;">
+				<p style="margin-right: 10px; line-height: 30px; margin: 0;">로그인 되어있지 않습니다.</p>
+			    <form th:action="@{/login/loginForm#login_page}" method="get">
+			        <input type="submit" value="Log-In" style="width: 80px; height: 30px; text-align: center; padding: 0; margin-left: 10px;">
+			    </form>
+			</div>
+			<div th:if="${session.memberLogin != null}" style="display: flex; justify-content: flex-end; align-items: center;">
+				<p style="margin-right: 10px; line-height: 30px; margin: 0;"><span th:text="${session.memberLogin.user_name}"></span>님 환영합니다</p>
+				<form th:action="@{/login/logout}" method="post" style="margin-left: 10px;">
+					<input type="submit" value="LogOut" id="logout" style="width: 80px; height: 30px; text-align: center; padding: 0;">
+				</form>
+			</div>
+			<div class="container">
+
+				<!-- Logo -->
+				<h1 id="logo"><a href="/mypage/myPageForm">My Page</a></h1>
+				<p>Personal Infomation</p>
+
+				<!-- Nav -->
+				<nav id="nav">
+					<ul>
+						<li><a class="icon solid fa-home" href="/index"><span>Home</span></a></li>
+						<li th:if="${session.memberLogin != null and session.memberLogin.user_auth == '1'}"><a class="icon solid fa-home" href="/admin/index_admin"><span>Admin</span></a></li>
+						<li><a class="icon solid fa-cog" href="/player/playlist"><span>PlayList</span></a></li>
+						<li><a class="icon solid fa-retweet" href="/board/boardlist"><span>Board</span></a></li>
+						<li><a class="icon solid fa-sitemap" href="/login/loginForm"><span>Sign up</span></a></li>
+						<li th:if="${session.memberLogin != null}"><a class="icon fa-chart-bar" href="/mypage/myPageForm"><span>My Page</span></a></li>
+					</ul>
+				</nav>
+
+			</div>
+		</section>
+
+		<!-- Main -->
+		<section id="main">
+			<div class="container">
+				<div id="content">
+
+					<!-- Table -->
+					<article class="box post">
+						<header>
+							<h2>여러분의 <strong>개인정보</strong>는 소중합니다!</h2>
+						</header>
+						<div class="table-wrapper col-md-10">
+							<table class="table table-striped table-hover table-borderless" th:object="${myInfo}">
+								<tr>
+									<td><label for="uno">번호</label></td>
+									<td><input type="text" id="uno" name="uno" th:field="*{uno}" readonly/></td>
+								</tr>
+								<tr>
+									<td><label for="email">이메일</label></td>
+									<td><input type="text" name="user_email" id="user_email" th:field="*{user_email}" readonly/></td>
+								</tr>
+								<tr>
+									<td><label for="password">비밀번호</label></td>
+									<td>
+										<input type="password" name="user_pw" id="user_pw" th:field="*{user_pw}" readonly/>
+									</td>
+								</tr>
+								<tr>
+									<td><label for="user_name">닉네임</label></td>
+									<td><input type="text" name="user_name" id="user_name" th:field="*{user_name}" readonly/></td>
+								</tr>
+								<tr>
+									<td><label for="user_auth">권한</label></td>
+									<td>
+										<input type="text" id="user_auth" name="user_auth" th:value="*{user_authString}" readonly/>
+									</td>
+								</tr>
+								<tr>
+									<td><label for="regdate">가입일</label></td>
+									<td><input type="text" name="regdate" id="regdate" th:field="*{regdate}" readonly/></td>
+								</tr>
+								<tr>
+									<td><label for="updatedate">수정일</label></td>
+									<td><input type="text" name="updatedate" id="updatedate" th:field="*{updatedate}" readonly/></td>
+								</tr>
+							</table>
+							<div colspan="2" align="left">
+								<div class="actions">
+									<input type="button" value="수정하기" onclick="goUpdate()" class="primary" />
+									<!-- <input type="reset" value="Reset" /> -->
+								</div>
+							</div>
+						</div>
+					</article>
+
+				</div>
+			</div>
+		</section>
+
+		<!-- Footer -->
+			<section id="footer">
+				<div class="container">
+					<header>
+						<h2>Questions or comments? <strong>Get in touch:</strong></h2>
+					</header>
+					<div class="row">
+						<div class="col-6 col-12-medium">
+							<section>
+								<form method="post" action="#">
+									<div class="row gtr-50">
+										<div class="col-6 col-12-small">
+											<input name="name" placeholder="Name" type="text" />
+										</div>
+										<div class="col-6 col-12-small">
+											<input name="email" placeholder="Email" type="text" />
+										</div>
+										<div class="col-12">
+											<textarea name="message" placeholder="Message"></textarea>
+										</div>
+										<div class="col-12">
+											<a href="#" class="form-button-submit button icon solid fa-envelope">Send Message</a>
+										</div>
+									</div>
+								</form>
+							</section>
+						</div>
+						<div class="col-6 col-12-medium">
+							<section>
+								<p>Erat lorem ipsum veroeros consequat magna tempus lorem ipsum consequat Phaselamet
+								mollis tortor congue. Sed quis mauris sit amet magna accumsan tristique. Curabitur
+								leo nibh, rutrum eu malesuada.</p>
+								<div class="row">
+									<div class="col-6 col-12-small">
+										<ul class="icons">
+											<li class="icon solid fa-home">
+												1234 Somewhere Road<br />
+												Nashville, TN 00000<br />
+												USA
+											</li>
+											<li class="icon solid fa-phone">
+												(000) 000-0000
+											</li>
+											<li class="icon solid fa-envelope">
+												<a href="#">info@untitled.tld</a>
+											</li>
+										</ul>
+									</div>
+									<div class="col-6 col-12-small">
+										<ul class="icons">
+											<li class="icon brands fa-twitter">
+												<a href="#">@untitled</a>
+											</li>
+											<li class="icon brands fa-instagram">
+												<a href="#">instagram.com/untitled</a>
+											</li>
+											<li class="icon brands fa-dribbble">
+												<a href="#">dribbble.com/untitled</a>
+											</li>
+											<li class="icon brands fa-facebook-f">
+												<a href="#">facebook.com/untitled</a>
+											</li>
+										</ul>
+									</div>
+								</div>
+							</section>
+						</div>
+					</div>
+				</div>
+				<div id="copyright" class="container">
+					<ul class="links">
+						<li>&copy; Untitled. All rights reserved.</li><li>Design: <a href="http://html5up.net">HTML5 UP</a></li>
+					</ul>
+				</div>
+			</section>
+
+	</div>
+
+	<!-- Scripts -->
+		<script src="/assets/js/jquery.min.js"></script>
+		<script src="/assets/js/jquery.dropotron.min.js"></script>
+		<script src="/assets/js/browser.min.js"></script>
+		<script src="/assets/js/breakpoints.min.js"></script>
+		<script src="/assets/js/util.js"></script>
+		<script src="/assets/js/main.js"></script>
+		<script type="text/javascript" th:src="@{/assets/js/jquery-3.6.4.js}"></script>
+		<script type="text/javascript" th:inline="javascript">
+			let uno = /*[[${myInfo.getUno()}]]*/'기본값';
+			
+			function goUpdate(){
+				location.href = "/mypage/myModify";
+			}
+		</script>
+
+</body>
+
+</html>
+
+
+
+
+
