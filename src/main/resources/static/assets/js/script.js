@@ -29,7 +29,7 @@ musicAudio.volume=0.5;
 
 //음악 및 음악 정보 불러오기(music_list.js 활용)
 const loadMusic=(num)=>{
-	albumArt.src=`/assets/images/player/${musicList[num].img}.jpg`;
+	albumArt.src=`/assets/images/player/${musicList[num].img}.png`;
 	musicAudio.src=`/assets/songs/${musicList[num].audio}.mp3`;
 	musicName.innerHTML=musicList[num].name;
 	musicArtist.innerHTML=musicList[num].artist;
