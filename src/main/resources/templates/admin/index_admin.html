@@ -152,12 +152,18 @@
 								<h2>What We'll Do</h2>
 								<h3>A subheading about what we do</h3>
 							</header>
+							<form id="todo-form">
+								<input type="text" placeholder="Write a To Do and Press Enter" style="width: 100%" required>
+							</form><br>
+							<ul id="todo-list" class="check-list"></ul>
+							<!-- 
 							<ul class="check-list">
 								<li>신청곡 확인</li>
 								<li>매주 업로드</li>
 								<li>욕설 유저 계정 비활성화</li>
 								<li>게임 및 코딩</li>
 							</ul>
+							 -->
 						</section>
 
 					</div>
@@ -303,6 +309,7 @@
 	<script src="/assets/adminassets/js/breakpoints.min.js"></script>
 	<script src="/assets/adminassets/js/util.js"></script>
 	<script src="/assets/adminassets/js/main.js"></script>
+	<script type="text/javascript" src="/assets/adminassets/js/todo.js"></script>
 	<script type="text/javascript" th:src="@{/assets/js/jquery-3.6.4.js}"></script>
 	<script type="text/javascript" th:inline="javascript">
 		let bno = /*[[${bno}]]*/'기본값';
