@@ -8,6 +8,7 @@ public class VhplayerApplication {
 
 	public static void main(String[] args) {
 		SpringApplication.run(VhplayerApplication.class, args);
+		System.out.println("");
 	}
 
 }
