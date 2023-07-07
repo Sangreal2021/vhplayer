@@ -21,12 +21,16 @@ function deleteToDo(event){
     saveToDos();
 }
 
+// <li th:if="${session.memberLogin.user_auth == '1'}">
+// <li style="border: none;">
+
 function paintToDo(newToDo){
     // console.log("I will paint " + newToDo);
     const li = document.createElement("li");
     li.id = newToDo.id;
     const span = document.createElement("span");
     span.innerText = newToDo.text;
+    
     const button = document.createElement("button");
     button.style.border = "none";
     button.style.background = "none";
